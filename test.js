@@ -1,5 +1,5 @@
 
-var cron = require('./cron.es5.js')
+var cron = require('./cron.js')
 
 var log_debug_messages = true
 
