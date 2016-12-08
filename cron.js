@@ -6,6 +6,26 @@ function assert(val, msg) {
   }
 }
 
+// i found that using Array.sort on arrays larger than 50 elements didn't work
+// on the esp8266, but this does
+function sort(ar) {
+  var newa = [];
+  ar.map(function (v) {
+    var i = 0;
+    if (newa.length === 0) {
+      newa[0] = v;
+      return;
+    }
+
+    while (newa[i] <= v) {
+      i++;
+    }
+    newa.splice(i, 0, v);
+  });
+
+  return newa;
+}
+
 var jobs = {};
 
 module.exports = function (pattern, callback, debug) {
@@ -67,11 +87,9 @@ function parse(pattern, debug) {
   });
   debug(pattern);
   return pattern.map(function (p) {
-    return p.split(',').map(function (v) {
+    return sort(p.split(',').map(function (v) {
       return parseInt(v);
-    }).sort(function (n1, n2) {
-      return n1 - n2;
-    });
+    }));
   });
 }
 

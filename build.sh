@@ -1,2 +1,2 @@
 babel -o cron.js cron.es6.js
-espruino -o test.min.js test.js
+espruino -m -o test.min.js test.js

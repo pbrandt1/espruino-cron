@@ -1,41 +1,61 @@
-function assert(val, msg) {
+function assert (val, msg) {
   if (!val) {
     throw new Error(msg || 'failed assertion')
   }
 }
 
+// i found that using Array.sort on arrays larger than 50 elements didn't work
+// on the esp8266, but this does
+function sort (ar) {
+  var newa = []
+  ar.map(function (v) {
+    var i = 0
+    if (newa.length === 0) {
+      newa[0] = v
+      return
+    }
+
+    while (newa[i] <= v) {
+      i++
+    }
+    newa.splice(i, 0, v)
+  })
+
+  return newa
+}
+
 var jobs = {}
 
-module.exports = function(pattern, callback, debug) {
+module.exports = function (pattern, callback, debug) {
   if (typeof debug === 'boolean' && debug) {
     debug = console.log.bind(console)
   } else {
-    debug = function() {};
+    debug = function () {}
   }
-  debug('Registering cron job for patterning ' + pattern);
+  debug('Registering cron job for patterning ' + pattern)
 
   var id = Math.random().toString(32).slice(2)
-  debug('id is ' + id);
+  debug('id is ' + id)
 
   jobs[id] = {
     pattern: pattern,
     times: parse(pattern, debug),
-    callback: callback,
-  };
+    callback: callback
+  }
 
   debug('t:')
   debug(jobs[id].times)
 
   setup(id, debug)
 
-  return { stop: function() {
+  return { stop: function () {
     delete jobs[id]
   }}
 }
 
-function parse(pattern, debug) {
+function parse (pattern, debug) {
   pattern = pattern.split(' ')
-  debug(pattern);
+  debug(pattern)
   assert(pattern.length === 6, 'invalid cron pattern supplied (' + pattern + ')')
 
   // clean up the pattern
@@ -57,18 +77,17 @@ function parse(pattern, debug) {
 
     var start = parseInt(p.split('-')[0])
     var end = parseInt(p.split('-')[1])
-    var a = [];
+    var a = []
     for (var i = start; i <= end; i++) {
-      a.push(i);
+      a.push(i)
     }
     return a.join(',')
   })
   debug(pattern)
-  return pattern.map(p => p.split(',').map(v => parseInt(v)).sort((n1, n2) => n1 - n2))
-
+  return pattern.map(p => sort(p.split(',').map(v => parseInt(v))))
 }
 
-function setup(id, debug) {
+function setup (id, debug) {
   if (!jobs[id]) {
     return debug('exiting setup for ' + id)
   }
@@ -97,7 +116,7 @@ function setup(id, debug) {
       return debug('will not run stopped job ' + id)
     }
     debug(['*', d.getMinutes(), d.getHours(), d.getDate(), d.getMonth(), d.getDay()].join(' '))
-    var ok = t[1].indexOf(d.getMinutes())>= 0
+    var ok = t[1].indexOf(d.getMinutes()) >= 0
       && t[2].indexOf(d.getHours()) >= 0
       && t[3].indexOf(d.getDate()) >= 0
       && t[4].indexOf(d.getMonth() + 1) >= 0
