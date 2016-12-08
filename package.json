@@ -1,15 +1,12 @@
 {
-  "name": "cron",
+  "name": "espruino-cron",
   "version": "1.0.0",
-  "description": "for espruino",
+  "description": "cron for espruino (and node.js)",
   "main": "cron.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "repository": "git@github.com:pbrandt1/espruino-cron.git",
+  "author": "pbrandt1 <peter.m.brandt@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0"
   }
 }
