@@ -26,6 +26,17 @@ function sort(ar) {
   return newa;
 }
 
+// expands "1-7" to "1,2,3,4,5,6,7"
+function expandRange(p) {
+  var start = parseInt(p.split('-')[0]);
+  var end = parseInt(p.split('-')[1]);
+  var a = [];
+  for (var i = start; i <= end; i++) {
+    a.push(i);
+  }
+  return a.join(',');
+}
+
 var jobs = {};
 
 module.exports = function (pattern, callback, debug) {
@@ -77,15 +88,27 @@ function parse(pattern, debug) {
       return p;
     }
 
-    var start = parseInt(p.split('-')[0]);
-    var end = parseInt(p.split('-')[1]);
-    var a = [];
-    for (var i = start; i <= end; i++) {
-      a.push(i);
-    }
-    return a.join(',');
+    return expandRange(p);
   });
   debug(pattern);
+
+  // handle "0/15"
+  pattern = pattern.map(function (p, i) {
+    if (p.indexOf('/') < 0) {
+      return p;
+    }
+
+    var start = parseInt(p.split('/')[0]);
+    var interval = parseInt(p.split('/')[1]);
+    var newp = expandRange(['0-59', '0-59', '0-23', '1-31', '1-12', '0-6'][i]);
+    newp = newp.split(',').map(function (v) {
+      return parseInt(v);
+    }).filter(function (v) {
+      return (v - start) % interval === 0;
+    }).join(',');
+
+    return newp;
+  });
   return pattern.map(function (p) {
     return sort(p.split(',').map(function (v) {
       return parseInt(v);

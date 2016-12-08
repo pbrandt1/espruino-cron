@@ -9,7 +9,7 @@ for espruino
       │ │ ╭─────── hour (0-23)
       │ │ │ ╭───── day of month (1-31)
       │ │ │ │ ╭─── month of year (1-12)
-      │ │ │ │ │ ╭─ day of week (1-7 where 1 is sunday)
+      │ │ │ │ │ ╭─ day of week (0-6 where 0 is sunday)
 */
 cron('* * * * * *', () => {
   console.log('running job')
@@ -30,9 +30,9 @@ job.stop()
 
 `0 0 0 * * *` Midnight (system time) every day
 
-`0 0 7 * * 2-6` Every weekday morning at 7am system time
+`0 0 7 * * 1-5` Every weekday morning at 7am system time
 
-`0 0 18 * * 1,7` Every weekend evening at 6pm system time
+`0 0 18 * * 0,6` Every weekend evening at 6pm system time
 
 ## related espruino trick
 
