@@ -129,18 +129,19 @@ function setup(id, debug) {
   var nowTimestamp = Math.floor(date.getTime());
   var nowSeconds = date.getSeconds();
   var nowMinutes = date.getMinutes();
+  var nowMillis = date.getMilliseconds();
 
   var secondsFromNow;
   if (t[0][0] === 0 && nowSeconds === 59) {
-    secondsFromNow = 1;
+    secondsFromNow = 1 - nowMillis/1000
   } else if (t[0].filter(function (v) {
     return v > nowSeconds;
   }).length > 0) {
     secondsFromNow = t[0].filter(function (v) {
       return v > nowSeconds;
-    })[0] - nowSeconds;
+    })[0] - nowSeconds - nowMillis/1000;
   } else {
-    secondsFromNow = 60 - nowSeconds + t[0][0];
+    secondsFromNow = 60 - nowSeconds - nowMillis/1000 + t[0][0];
   }
 
   setTimeout(function () {
